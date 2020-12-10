@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 
+
 const feedRoutes = require('./routes/feed');
 const authRoutes = require('./routes/auth');
 const { stat } = require('fs');
@@ -84,7 +85,12 @@ mongoose
   .connect(MONGODB_URI)
   .then((result) => {
     console.log('CONNECTED!');
-    app.listen(8080);
+    const server = app.listen(8080);
+    const io = require('./socket').init(server);
+    io.on('connection', socket => {
+      console.log('Client connected!');
+    });
+
   })
   .catch((err) => {
     console.log(err);
